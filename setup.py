@@ -21,14 +21,14 @@ setup(
         ],
     },
     packages=[
-        'ggoutlier',
         'ausseabed.ggoutlier.qax'
     ],
     zip_safe=False,
     package_data={},
     install_requires=[
         'Click',
-        'ausseabed.qajson'
+        'ausseabed.qajson',
+        'ggoutlier'
     ],
     tests_require=['pytest'],
 )
