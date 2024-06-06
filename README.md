@@ -12,12 +12,10 @@ More details on GGOutlier and its use independent of QAX can be found in the [re
 
 There's no use case for using the contents of this repository outside QAX. To use GGOutlier refer to the instructions included in the links above. The following is a getting started guide for developers wishing to further develop the QAX GGOutlier plugin.
 
-This repository pulls in GGOutlier as a submodule, therefore the following commands must be run to clone the repository and submodule.
+This repository requires a Python environment where GGOutlier has already been installed.
 
     git clone https://github.com/ausseabed/ggoutlier-qax-plugin.git
     cd ggoutlier-qax-plugin
-    git submodule init
-    git submodule update
 
 Now install the module. It's recommended to use the `-e` arguement to support development.
 
