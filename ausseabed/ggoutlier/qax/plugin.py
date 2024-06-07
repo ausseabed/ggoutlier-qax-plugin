@@ -1,4 +1,5 @@
 from datetime import datetime
+from ggoutlier import cloud2tif
 import logging
 import traceback
 from typing import Callable, Any
@@ -88,9 +89,24 @@ class GgoutlierQaxPlugin(QaxCheckToolPlugin):
         # the first grid file that contains a depth band
         grid_file = None
         for f in check.inputs.files:
-            if grid_file is None and f.file_type == 'Survey DTMs':
-                # TODO - make sure this file contains a depth band
-                grid_file = Path(f.path)
+            if f.file_type == 'Survey DTMs':
+                qajson_input_file = Path(f.path)
+                # ggoutlier include some util classes we can use to get details
+                # from the raster file
+                band_names = cloud2tif.getbandnames(f.path)
+                band_names = list(map(lambda x: x.lower(), band_names))
+
+                # if there's a single band tif, and it has depth in the filename
+                # then use it
+                if 'depth' in qajson_input_file.name.lower() and len(band_names) == 1:
+                    grid_file = qajson_input_file
+                    break
+
+                # if it's a single or multiband tif, and depth is one of the band
+                # names included in the tifs metadata, then use it
+                if 'depth' in band_names:
+                    grid_file = qajson_input_file
+                    break
 
         output_details = QajsonOutputs()
         check.outputs = output_details
