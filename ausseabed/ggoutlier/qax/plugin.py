@@ -143,6 +143,9 @@ class GgoutlierQaxPlugin(QaxCheckToolPlugin):
             verbose=input_verbose,
             outdir=outdir
         )
+        ggo_check.spatial_outputs_export = self.spatial_outputs_qajson
+        ggo_check.spatial_outputs_export_location = self.spatial_outputs_export_location
+        ggo_check.spatial_outputs_qajson = self.spatial_outputs_qajson
 
         try:
             # now run the check

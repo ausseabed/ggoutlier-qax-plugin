@@ -4,10 +4,13 @@ Resolution independent density check
 
 from pathlib import Path
 from typing import Optional
-import tempfile
+import distutils
+import ggoutlier
 import json
-import shutil
 import logging
+import os
+import shutil
+import tempfile
 
 from ausseabed.qajson.model import QajsonParam, QajsonOutputs, QajsonExecution
 
@@ -46,7 +49,41 @@ class GgoutlierCheck:
         self.near = near
         self.verbose = verbose
 
-    def run(self):
+        self.spatial_outputs_export = False
+        self.spatial_outputs_export_location = None
+        self.spatial_outputs_qajson = True
+
+    def _get_output_file_location(
+            self
+        ) -> str:
+        if self.spatial_outputs_export_location is None:
+            return None
+        check_path = os.path.join(self.grid_file.stem, self.name)
+        return os.path.join(self.spatial_outputs_export_location, check_path)
+
+    def __get_ggoutlier_cmd_args(self) -> list[str]:
+        """ Build a list of strings that mimic what a user would provide to ggoutlier
+        as command line args.
+        """
+        args: list[str] = []
+        args += ['-i', str(self.grid_file.absolute())]
+        args += ['-near', str(self.near)]
+        # args += ['-standard', self.standard]
+        args += ['-standard', 'order1b']
+        if self.verbose:
+            args += ['-verbose']
+        args += ['-odir', str(self.temp_base_dir.absolute())]
+
+        return args
+
+    def _move_tmp_dir(self):
+        ol = self._get_output_file_location()
+        LOG.debug(f"Moving GGOutlier output: {str(self.temp_base_dir)} to {ol}")
+        distutils.dir_util.copy_tree(
+            str(self.temp_base_dir.absolute()),
+            ol)
+
+    def run(self) -> None:
         """
         Runs GGOutlier over all the input grid files that have been provided
         """
@@ -59,7 +96,21 @@ class GgoutlierCheck:
 
         self.passed = True
 
-        # with tempfile.TemporaryDirectory(suffix=".density-check") as tmpdir:
+        with tempfile.TemporaryDirectory(suffix=".ggoutlier-check") as tmpdir:
+            self.temp_base_dir = Path(tmpdir)
+            cmd_args = self.__get_ggoutlier_cmd_args()
+            LOG.debug(f"GGOutlier args: {' '.join(cmd_args)}")
+
+            # run GGOutlier
+            ggoutlier.main(cmd_args)
+
+            LOG.info("self.spatial_outputs_export " + str(self.spatial_outputs_export))
+            if self.spatial_outputs_export:
+                self._move_tmp_dir()
+
+
+
+
         #     out_pathname = Path(tmpdir).joinpath("density.tif") 
 
         #     LOG.info("Calculating density")
