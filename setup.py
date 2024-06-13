@@ -26,7 +26,6 @@ setup(
     zip_safe=False,
     package_data={},
     install_requires=[
-        'Click',
         'ausseabed.qajson',
         'ggoutlier'
     ],
