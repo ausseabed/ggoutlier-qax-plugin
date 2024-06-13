@@ -17,6 +17,7 @@ import glob
 import json
 import logging
 import os
+import rasterio
 import shutil
 import tempfile
 
@@ -230,6 +231,37 @@ class GgoutlierCheck:
                 except Exception as ex:
                     raise RuntimeError(f"Error parsing log line: {line}") from ex
 
+    def _extract_extents(self) -> geojson.MultiPolygon:
+        """ Generates geojson extents from input grid file
+        """
+        extents: geojson.MultiPolygon | None = None
+        with rasterio.open(str(self.grid_file)) as src_grid:
+            bounds = src_grid.bounds
+
+            # need to transform into wsg84 for geojson
+            ogr_srs = osr.SpatialReference()
+            ogr_srs.ImportFromWkt(src_grid.crs.to_wkt())
+            ogr_srs_out = osr.SpatialReference()
+            ogr_srs_out.ImportFromEPSG(4326)
+            transform = osr.CoordinateTransformation(ogr_srs, ogr_srs_out)
+
+            transformed_bounds = transform.TransformBounds(
+                bounds.left,
+                bounds.bottom,
+                bounds.right,
+                bounds.top,
+                2
+            )
+            minx, miny, maxx, maxy = transformed_bounds
+
+            extents = geojson.MultiPolygon([[[
+                (miny, minx),
+                (miny, maxx),
+                (maxy, maxx),
+                (maxy, minx),
+            ]]])
+        return extents
+
     def run(self) -> None:
         """
         Runs GGOutlier over all the input grid files that have been provided
@@ -240,6 +272,8 @@ class GgoutlierCheck:
         LOG.info(f"Verbose: {self.verbose}")
 
         LOG.info(f"Output folder: {self.outdir}")
+
+        self.extents_geojson = self._extract_extents()
 
         # import contextlib
         # with contextlib.nullcontext(tempfile.mkdtemp()) as tmpdir:

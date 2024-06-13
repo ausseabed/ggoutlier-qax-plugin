@@ -190,6 +190,7 @@ class GgoutlierQaxPlugin(QaxCheckToolPlugin):
             json_map_feature = geojson.FeatureCollection(ggo_check.geojson_point_features)
             json_map = geojson.mapping.to_mapping(json_map_feature)
             data['map'] = json_map
+            data['extents'] = ggo_check.extents_geojson
 
         if execution_details.status == 'completed':
             data['points_outside_spec'] = ggo_check.points_outside_spec
