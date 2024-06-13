@@ -189,13 +189,31 @@ class GgoutlierCheck:
 
         self.passed = True
 
+        # import contextlib
+        # with contextlib.nullcontext(tempfile.mkdtemp()) as tmpdir:
+        # Note: TemporaryDirectory is automatically deleted, use the above to debug
+        # as tempfile.mkdtemp isn't automatically deleted
         with tempfile.TemporaryDirectory(suffix=".ggoutlier-check") as tmpdir:
             self.temp_base_dir = Path(tmpdir)
             cmd_args = self.__get_ggoutlier_cmd_args()
             LOG.debug(f"GGOutlier args: {' '.join(cmd_args)}")
 
-            # run GGOutlier
-            ggoutlier.main(cmd_args)
+            # GGOutlier uses the root logger to generate a log file
+            # The report GGOutlier generates reads this log file and extracts
+            # file paths from it. It assumes it's the root logger that has
+            # generated the log file.
+            # This means we have to temporarily switch out the root logger
+            # and switch back (see finally block below) once GGOutlier is complete
+            old_root_logger = logging.root
+            logging.root = logging.Logger("root", level=logging.INFO)
+
+            try:
+                # run GGOutlier
+                ggoutlier.main(cmd_args)
+            except Exception as ex:
+                raise ex
+            finally:
+                logging.root = old_root_logger
 
             shp_file = self._get_ggoutlier_shp()
             if not shp_file:
