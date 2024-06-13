@@ -21,6 +21,8 @@ setup(
         ],
     },
     packages=[
+        'ausseabed.ggoutlier',
+        'ausseabed.ggoutlier.lib',
         'ausseabed.ggoutlier.qax'
     ],
     zip_safe=False,
