@@ -180,6 +180,11 @@ class GgoutlierCheck:
                     # So limit the maximum anount of points. This doesnt effect the
                     # reported stats, only what is shown in the map widget.
                     self.max_geojson_points_exceeded = True
+                    self.messages.append(
+                        "Note: number of outliers identified exceeds that which can be "
+                        "displayed within QAX. Please view shp file included in the "
+                        "detailed spatial outputs for all outlier locations."
+                    )
                     LOG.debug("Exceeded geojson point count")
                     break
 
