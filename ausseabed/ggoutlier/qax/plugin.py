@@ -167,13 +167,18 @@ class GgoutlierQaxPlugin(QaxCheckToolPlugin):
         # captured and presented to the user
         if ggo_check.passed:
             output_details.check_state = 'pass'
+            state_msg = f"No outliers found, {ggo_check.points_total} were checked"
         else:
             output_details.check_state = 'fail'
-
-        # pass_percentage = (density_check.total_nodes - density_check.failed_nodes) / density_check.total_nodes
+            state_msg = (
+                f"{ggo_check.points_outside_spec} outliers were found in a total "
+                f"of {ggo_check.points_total} points. This represents a percentage of "
+                f"{ggo_check.points_outside_spec_percentage:.3f}%"
+            )
 
         messages: list[str] = []
-        messages.append("check message")
+        messages.append(state_msg)
+        messages.extend(ggo_check.messages)
 
         output_details.messages = messages
 
@@ -181,42 +186,15 @@ class GgoutlierQaxPlugin(QaxCheckToolPlugin):
         data = {}
 
         if self.spatial_outputs_qajson and execution_details.status == 'completed':
+            # then we can include some geojson in the qajson output
             json_map_feature = geojson.FeatureCollection(ggo_check.geojson_point_features)
             json_map = geojson.mapping.to_mapping(json_map_feature)
             data['map'] = json_map
 
-
-        #     # the qax viewer isn't designed to be an all bells viewing solution
-        #     # nor replace tools like QGIS, TuiView ...
-        #     # the vector geoms need to be simplified, and all geoms transformed
-        #     # to epsg:4326
-        #     # other plugins use a buffer of 5 pixel widths and then simplify
-
-        #     with rasterio.open(grid_file) as ds:
-        #         # bounds derived from input raster
-        #         gdf_box = geopandas.GeoDataFrame(
-        #             {"geometry": [geometry.box(*ds.bounds)]},
-        #             crs=ds.crs,
-        #         ).to_crs(epsg=4326)
-
-        #         # buffering; assuming square-ish pixels ...
-        #         distance = 5*ds.res[0]  # used for buffering and simplifying
-        #         buffered = density_check.gdf.buffer(distance)
-
-        #         # false means use the "Douglas-Peucker algorithm"
-        #         simplified_geom = buffered.simplify(
-        #             distance, preserve_topology=False
-        #         )
-        #         warped_geom = simplified_geom.to_crs(epsg=4326)
-
-        #         # qax map viewer requires MultiPolygon geoms
-        #         mp_box_geoms = geometry.MultiPolygon(gdf_box.geometry.values)
-        #         mp_pix_geoms = geometry.MultiPolygon(
-        #             warped_geom.geometry.values,
-        #         )
-
-        #         data['map'] = geometry.mapping(mp_box_geoms)
-        #         data['extents'] = geometry.mapping(mp_pix_geoms)
+        if execution_details.status == 'completed':
+            data['points_outside_spec'] = ggo_check.points_outside_spec
+            data['points_total'] = ggo_check.points_total
+            data['points_outside_spec_percentage'] = ggo_check.points_outside_spec_percentage
 
         output_details.data = data
 
