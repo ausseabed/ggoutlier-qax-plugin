@@ -11,7 +11,7 @@ from hyo2.qax.lib.plugin import QaxCheckToolPlugin, QaxCheckReference, \
 from ausseabed.qajson.model import QajsonRoot, QajsonDataLevel, QajsonCheck, \
     QajsonFile, QajsonInputs, QajsonExecution, QajsonOutputs
 
-from ausseabed.ggoutlier.ggoutlier_check import GgoutlierCheck
+from ausseabed.ggoutlier.lib.ggoutlier_check import GgoutlierCheck
 
 LOG = logging.getLogger(__name__)
 
