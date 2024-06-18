@@ -91,8 +91,7 @@ class GgoutlierCheck:
         args: list[str] = []
         args += ['-i', str(self.grid_file.absolute())]
         args += ['-near', str(self.near)]
-        # args += ['-standard', self.standard]
-        args += ['-standard', 'order1b']
+        args += ['-standard', self.standard]
         if self.verbose:
             args += ['-verbose']
         args += ['-odir', str(self.temp_base_dir.absolute())]
