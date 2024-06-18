@@ -46,6 +46,7 @@ class GgoutlierQaxPlugin(QaxCheckToolPlugin):
             supported_file_types=GgoutlierQaxPlugin.file_types,
             default_input_params=GgoutlierCheck.input_params,
             version=GgoutlierCheck.version,
+            parameter_help_link=GgoutlierCheck.parameter_help_link,
         )
         check_refs.append(cr)
         return check_refs

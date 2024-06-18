@@ -43,6 +43,7 @@ class GgoutlierCheck:
         QajsonParam("Near", 5),
         QajsonParam("Verbose", False),
     ]
+    parameter_help_link = 'user_manual_qax_ggoutlier.html#input-parameters'
 
     def __init__(
         self,
