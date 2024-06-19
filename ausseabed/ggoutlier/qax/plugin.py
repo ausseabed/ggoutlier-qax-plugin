@@ -2,6 +2,8 @@ from datetime import datetime
 from ggoutlier import cloud2tif
 import geojson
 import logging
+import os
+import rasterio
 import traceback
 from typing import Callable, Any
 from pathlib import Path
@@ -227,3 +229,31 @@ class GgoutlierQaxPlugin(QaxCheckToolPlugin):
 
         if qajson_update_callback is not None:
             qajson_update_callback()
+
+    # This info is presented in the QAX UI details column
+    def get_file_details(self, filename: str) -> str:
+        """ Return some details about the raster file that's been provided. In this
+        case a list of the bands, and the resolution of the dataset.
+        """
+        res: list[str] = []
+
+        band_names: list[str] = cloud2tif.getbandnames(filename)
+        for band_name in band_names:
+            if band_name is None:
+                if 'depth' in Path(filename).stem.lower():
+                    res.append('depth')
+                elif 'density' in Path(filename).stem.lower():
+                    res.append('density')
+                elif 'uncertainty' in Path(filename).stem.lower():
+                    res.append('uncertainty')
+                else:
+                    res.append(f"Could not identify name in: {Path(filename).stem}")
+            else:
+                res.append(band_name)
+
+        with rasterio.open(filename) as dataset:
+            width = dataset.width
+            height = dataset.height
+            res.append(f"{width}{chr(0x00D7)}{height}")
+
+        return "\n".join(res)
