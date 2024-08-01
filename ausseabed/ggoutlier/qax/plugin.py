@@ -28,6 +28,12 @@ class GgoutlierQaxPlugin(QaxCheckToolPlugin):
             group="Survey DTMs",
             icon="tif.png"
         ),
+        QaxFileType(
+            name="GeoTIFF",
+            extension="tiff",
+            group="Survey DTMs",
+            icon="tif.png"
+        ),
     ]
 
     def __init__(self):
