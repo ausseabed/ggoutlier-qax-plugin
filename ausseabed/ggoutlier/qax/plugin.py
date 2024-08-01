@@ -104,7 +104,7 @@ class GgoutlierQaxPlugin(QaxCheckToolPlugin):
                 # ggoutlier include some util classes we can use to get details
                 # from the raster file
                 band_names = cloud2tif.getbandnames(f.path)
-                band_names = list(map(lambda x: x.lower(), band_names))
+                band_names = [name.lower() for name in band_names if name is not None]
 
                 # if there's a single band tif, and it has depth in the filename
                 # then use it
