@@ -2,7 +2,6 @@ from datetime import datetime
 from ggoutlier import cloud2tif
 import geojson
 import logging
-import os
 import rasterio
 import traceback
 from typing import Callable, Any
@@ -10,8 +9,8 @@ from pathlib import Path
 
 from hyo2.qax.lib.plugin import QaxCheckToolPlugin, QaxCheckReference, \
     QaxFileType
-from ausseabed.qajson.model import QajsonRoot, QajsonDataLevel, QajsonCheck, \
-    QajsonFile, QajsonInputs, QajsonExecution, QajsonOutputs
+from ausseabed.qajson.model import QajsonRoot, QajsonCheck, \
+    QajsonExecution, QajsonOutputs
 
 from ausseabed.ggoutlier.lib.ggoutlier_check import GgoutlierCheck
 
@@ -162,7 +161,7 @@ class GgoutlierQaxPlugin(QaxCheckToolPlugin):
             ggo_check.run()
 
             execution_details.status = 'completed'
-        except Exception as ex:
+        except Exception:
             execution_details.status = 'failed'
             execution_details.error = traceback.format_exc()
         finally:
