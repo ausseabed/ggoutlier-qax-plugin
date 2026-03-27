@@ -14,14 +14,12 @@ import distutils
 import geojson
 import ggoutlier
 import glob
-import json
 import logging
 import os
 import rasterio
-import shutil
 import tempfile
 
-from ausseabed.qajson.model import QajsonParam, QajsonOutputs, QajsonExecution
+from ausseabed.qajson.model import QajsonParam
 
 
 LOG = logging.getLogger(__name__)
