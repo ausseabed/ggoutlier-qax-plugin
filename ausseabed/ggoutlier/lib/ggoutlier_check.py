@@ -10,7 +10,7 @@ import geojson.geometry
 from osgeo import ogr, osr
 from pathlib import Path
 from typing import Optional
-import distutils
+import shutil
 import geojson
 import ggoutlier
 import glob
@@ -99,9 +99,9 @@ class GgoutlierCheck:
     def _move_tmp_dir(self):
         ol = self._get_output_file_location()
         LOG.debug(f"Moving GGOutlier output: {str(self.temp_base_dir)} to {ol}")
-        distutils.dir_util.copy_tree(
+        shutil.copy_tree(
             str(self.temp_base_dir.absolute()),
-            ol)
+            ol, dirs_exist_ok=True)
 
     def _get_ggoutlier_shp(self) -> Path | None:
         pattern = os.path.join(str(self.temp_base_dir.absolute()), '*.shp')
