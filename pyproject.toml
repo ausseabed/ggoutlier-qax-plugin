@@ -10,6 +10,9 @@ requires-python = ">=3.10"
 dependencies = [
     "ausseabed.qajson",
     "ggoutlier",
+    "geojson",
+    "rasterio",
+    "gdal"
 ]
 
 [project.urls]
