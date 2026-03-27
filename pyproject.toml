@@ -1,0 +1,27 @@
+[project]
+name = "ausseabed.ggoutlier"
+version = "0.0.1"
+description = "QAX Plugin for GGOutlier"
+authors = [
+    { name = "Lachlan Hurst", email = "lachlan.hurst@gmail.com" },
+]
+license = "Apache-2.0"
+requires-python = ">=3.10"
+dependencies = [
+    "ausseabed.qajson",
+    "ggoutlier",
+]
+
+[project.urls]
+Homepage = "https://github.com/ausseabed/ggoutlier-qax-plugin"
+Repository = "https://github.com/ausseabed/ggoutlier-qax-plugin"
+
+[project.scripts]
+run_ggoutlier = "ausseabed.ggoutlier.qax.run_ggoutlier:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ausseabed"]
