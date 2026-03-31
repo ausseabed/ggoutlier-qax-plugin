@@ -1,6 +1,6 @@
 [project]
 name = "ausseabed.ggoutlier"
-version = "0.0.1"
+version = "0.1.0"
 description = "QAX Plugin for GGOutlier"
 authors = [
     { name = "Lachlan Hurst", email = "lachlan.hurst@gmail.com" },
