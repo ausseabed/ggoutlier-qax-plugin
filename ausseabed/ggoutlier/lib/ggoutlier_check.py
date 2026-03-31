@@ -99,7 +99,7 @@ class GgoutlierCheck:
     def _move_tmp_dir(self):
         ol = self._get_output_file_location()
         LOG.debug(f"Moving GGOutlier output: {str(self.temp_base_dir)} to {ol}")
-        shutil.copy_tree(
+        shutil.copytree(
             str(self.temp_base_dir.absolute()),
             ol, dirs_exist_ok=True)
 
